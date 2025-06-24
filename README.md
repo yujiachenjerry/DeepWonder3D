@@ -1,6 +1,8 @@
 # Deepwonder3D：**Rapid** robust high-fidelity 3D neuronal extraction from multi-view projections
 
-<img src="./figs/logo_white.jpg" width="50%" />
+<p align="center">
+  <img src="./figs/logo_white.jpg" style="width: 50%; display: block; margin: auto;" />
+</p>
 
 ## About DeepWonder3D
 
