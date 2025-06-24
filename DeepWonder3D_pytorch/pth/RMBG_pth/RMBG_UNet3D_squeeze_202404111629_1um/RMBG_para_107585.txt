@@ -1,0 +1,141 @@
+GPU : 1
+RMBG_n_epochs : 300
+RMBG_batch_size : 1
+RMBG_img_w : 256
+RMBG_img_h : 256
+RMBG_img_s : 256
+RMBG_lr : 5e-05
+RMBG_b1 : 0.5
+RMBG_b2 : 0.999
+RMBG_norm_factor : 1
+RMBG_f_maps : 16
+RMBG_in_c : 1
+RMBG_out_c : 1
+RMBG_down_num : 4
+RMBG_output_dir : ./results
+RMBG_datasets_folder : NA_0.03_depthrange_200_n_1.00_res_0.8_expanded_soma_1.2_train
+RMBG_GT_folder : mov_wo_bg
+RMBG_input_folder : mov_w_bg
+RMBG_datasets_path : ..//datasets
+RMBG_use_pretrain : 0
+RMBG_pretrain_index : RMBG_49.pth
+RMBG_pretrain_model : RMBG_UNet3D_squeeze_202404010023_2um
+RMBG_pretrain_path : pth
+RMBG_pth_path : pth
+RMBG_select_img_num : 10000
+RMBG_train_datasets_size : 2000
+RMBG_input_pretype : mean
+RMBG_GT_pretype : min
+RMBG_net_type : UNet3D_squeeze
+RMBG_output_path : ./results/RMBG_UNet3D_squeeze_202404111629
+RMBG_pth_save_path : pth//RMBG_UNet3D_squeeze_202404111629
+RMBG_net : DataParallel(
+  (module): Network_3D_Unet(
+    (Generator): UNet3D_squeeze(
+      (encoders): ModuleList(
+        (0): Encoder(
+          (basic_module): DoubleConv(
+            (SingleConv1): SingleConv(
+              (conv): Conv3d(1, 8, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+            (SingleConv2): SingleConv(
+              (conv): Conv3d(8, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+          )
+        )
+        (1): Encoder(
+          (pooling): MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=0, dilation=1, ceil_mode=False)
+          (basic_module): DoubleConv(
+            (SingleConv1): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+            (SingleConv2): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+          )
+        )
+        (2): Encoder(
+          (pooling): MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=0, dilation=1, ceil_mode=False)
+          (basic_module): DoubleConv(
+            (SingleConv1): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+            (SingleConv2): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+          )
+        )
+        (3): Encoder(
+          (pooling): MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=0, dilation=1, ceil_mode=False)
+          (basic_module): DoubleConv(
+            (SingleConv1): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+            (SingleConv2): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (decoders): ModuleList(
+        (0): Decoder(
+          (basic_module): DoubleConv(
+            (SingleConv1): SingleConv(
+              (conv): Conv3d(32, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+            (SingleConv2): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+          )
+        )
+        (1): Decoder(
+          (basic_module): DoubleConv(
+            (SingleConv1): SingleConv(
+              (conv): Conv3d(32, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+            (SingleConv2): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+          )
+        )
+        (2): Decoder(
+          (basic_module): DoubleConv(
+            (SingleConv1): SingleConv(
+              (conv): Conv3d(32, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+            (SingleConv2): SingleConv(
+              (conv): Conv3d(16, 16, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+              (ReLU): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (final_conv): Conv3d(16, 1, kernel_size=(1, 1, 1), stride=(1, 1, 1))
+      (final_activation): Sigmoid()
+    )
+  )
+)
+optimizer_G : Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.5, 0.999)
+    capturable: False
+    eps: 1e-08
+    foreach: None
+    lr: 5e-05
+    maximize: False
+    weight_decay: 0
+)

@@ -1,0 +1,163 @@
+task_type : signal
+net_type : trans_mini
+if_D : 0
+GPU : 1
+SR_n_epochs : 2000
+SR_batch_size : 1
+SR_sub_img_size : 32
+SR_img_w : 240
+SR_img_h : 240
+SR_img_s : 5
+SR_lr : 1e-05
+SR_b1 : 0.5
+SR_b2 : 0.999
+SR_f_maps : 16
+SR_in_c : 5
+SR_out_c : 1
+SR_datasets_path : ..//datasets
+SR_pth_path : pth
+SR_select_img_num : 10000
+SR_train_datasets_size : 500
+SR_norm_factor : 10
+SR_output_dir : ./results
+SR_datasets_folder : NA_0.03_depthrange_200_n_1.00_res_0.8_expanded_soma_1.2_train_2um/mov_w_bg
+SR_use_pretrain : 0
+SR_pretrain_index : signal_SR_480.pth
+SR_pretrain_model : SR_HALF_mean__up15_down5_202401091538
+SR_pretrain_path : pth
+SR_sample_up : 6
+SR_sample_down : 2
+SR_input_pretype : mean
+SR_output_path : ./results/SR_HALF_mean__up15_down5_202404010026
+SR_pth_save_path : pth//SR_HALF_mean__up15_down5_202404010026
+SR_net : DataParallel(
+  (module): SR_Net(
+    (net): SR_trans_Net1(
+      (net1): CNN(
+        (conv1): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(5, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (conv2): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (conv3): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+      )
+      (net2): Unet4_no_end(
+        (conv1): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (pool1): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+        (conv2): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (pool2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+        (conv3): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (pool3): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+        (conv4): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (pool4): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+        (conv5): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (up6): Upsample(scale_factor=2.0, mode=nearest)
+        (up7): Upsample(scale_factor=2.0, mode=nearest)
+        (up8): Upsample(scale_factor=2.0, mode=nearest)
+        (up9): Upsample(scale_factor=2.0, mode=nearest)
+        (conv6): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (conv7): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (conv8): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (conv9): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          )
+        )
+      )
+      (up_block): UP_trans_resize_block(
+        (up1): ConvTranspose2d(16, 16, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        (c1): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (up2): ConvTranspose2d(16, 16, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        (c2): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (up3): ConvTranspose2d(16, 16, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        (c3): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+        (up4): ConvTranspose2d(16, 16, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        (c4): SingleConv(
+          (conv1): Sequential(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (1): ReLU(inplace=True)
+          )
+        )
+      )
+      (dp_layer): Dropout(p=0.3, inplace=False)
+    )
+  )
+)
+optimizer : Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.5, 0.999)
+    capturable: False
+    eps: 0.0001
+    foreach: None
+    lr: 1e-05
+    maximize: False
+    weight_decay: 0
+)
