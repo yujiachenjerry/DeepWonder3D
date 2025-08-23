@@ -115,7 +115,6 @@ class calculate_neuron():
         # print('SR_folder : ',SR_folder)
         SR_name_list = []
         SR_list = {}
-        # SR_folder = '..//results_07082023_exp//SANeuron_07082023_18_view_up5//STEP_3_SR'
         for SR_name in list(os.walk(SR_folder, topdown=False))[-1][-1]:
             # print('im_name -----> ',im_name)
             if '.tif' in SR_name:

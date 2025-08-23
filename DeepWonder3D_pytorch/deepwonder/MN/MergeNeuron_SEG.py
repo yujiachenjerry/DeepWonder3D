@@ -71,6 +71,10 @@ def merge_neuron_SEG_mul_inten(mask_stack,
     raw_image_std = np.std(raw_image, axis=0)
     raw_image_mean = np.mean(raw_image, axis=0)
 
+    #######################################################
+    # Ostu thresholding
+    #######################################################
+    '''
     mask_stack = mask_stack - np.min(mask_stack)
     mask_stack = mask_stack/np.max(mask_stack)*255
 
@@ -85,7 +89,30 @@ def merge_neuron_SEG_mul_inten(mask_stack,
     mask_stack_filted = mask_stack
     # from skimage import io
     # io.imsave('test.tif', mask_stack_filted)
+    '''
 
+    mask_stack = mask_stack - np.percentile(mask_stack, 0.1, axis=(1, 2), keepdims=True)
+    mask_stack = mask_stack / np.max(mask_stack, axis=(1, 2), keepdims=True)
+    mask_stack = mask_stack.clip(0, 1) * 255
+    max_value = np.max(mask_stack)
+    print('max_value ---> ', max_value)
+
+    N, H, W = mask_stack.shape
+    masks = []
+    for ii in range(N):
+        mask = mask_stack[ii]
+        _, threshold = otsu(mask)
+        threshold = threshold * 0.7  # 0.7 is adjustable
+        print(f'SEG {ii + 1}/{N}: threshold ---> ', threshold)
+        mask[mask >= threshold] = max_value
+        mask[mask < threshold] = 0
+        masks.append(mask)
+
+    masks = np.array(masks)
+    mask_stack_filted = masks
+    mask_stack = masks
+
+    #######################################################
     w_good_neuron_list = []
     w_bad_neuron_list = []
     g_f_contours = np.zeros(mask_stack.shape)
