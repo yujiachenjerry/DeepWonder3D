@@ -10,21 +10,21 @@ import time
 import numpy as np
 import torch
 
-def main_pipeline(input_path, 
-                    input_folder, 
-                    SR_up_rate, 
-                    GPU_index, 
-                    output_dir,
-                    t_resolution = 10,
-                    output_folder = '', 
-                    type = 'deno_sr_rmbg_seg_mn',
-                    denoise_index = 0):
 
+def main_pipeline(input_path,
+                  input_folder,
+                  SR_up_rate,
+                  GPU_index,
+                  output_dir,
+                  t_resolution=10,
+                  output_folder='',
+                  type='deno_sr_rmbg_seg_mn',
+                  denoise_index=0):
     NOW_path = input_path
     NOW_folder = input_folder
     ############ DENO #########################################
     ###########################################################
-    
+
     DENO_datasets_path = NOW_path
     DENO_datasets_folder = NOW_folder
     DENO_output_dir = output_dir
@@ -41,8 +41,8 @@ def main_pipeline(input_path,
     DENO_para['denoise_index'] = denoise_index
 
     if 'deno' in type:
-        DENO_para = config_DENO_para(DENO_para, 
-        DENO_datasets_path+'//'+DENO_datasets_folder)
+        DENO_para = config_DENO_para(DENO_para,
+                                     DENO_datasets_path + '//' + DENO_datasets_folder)
 
         DENO_model_test = test_DENO_net(DENO_para)
         DENO_model_test.run()
@@ -53,33 +53,33 @@ def main_pipeline(input_path,
 
     ############ TR #########################################
     ###########################################################
-    if t_resolution!=10:
+    if t_resolution != 10:
         if 'tr' in type:
             TR_output_dir = output_dir
             TR_output_folder = 'STEP_2_TR'
-            adjust_time_resolution(input_path = NOW_path,
-                                input_folder = NOW_folder,
-                                output_path = TR_output_dir,
-                                output_folder = TR_output_folder,
-                                t_resolution = t_resolution)
+            adjust_time_resolution(input_path=NOW_path,
+                                   input_folder=NOW_folder,
+                                   output_path=TR_output_dir,
+                                   output_folder=TR_output_folder,
+                                   t_resolution=t_resolution)
     ############ SR #########################################
     ###########################################################
     SR_output_dir = output_dir
     SR_output_folder = 'STEP_3_SR'
 
     from para_dict import SR_para, config_SR_para
-    
+
     SR_para['GPU'] = GPU_index
     SR_para['up_rate'] = SR_up_rate
-    SR_para['datasets_folder'] =  NOW_folder
-    SR_para['datasets_path'] =  NOW_path
+    SR_para['datasets_folder'] = NOW_folder
+    SR_para['datasets_path'] = NOW_path
     SR_para['output_dir'] = SR_output_dir
-    SR_para['SR_output_folder'] = SR_output_folder # 'SR'
+    SR_para['SR_output_folder'] = SR_output_folder  # 'SR'
 
-    print('SR_para -----> ',SR_para)
+    print('SR_para -----> ', SR_para)
     if 'sr' in type:
-        SR_para = config_SR_para(SR_para, 
-        SR_para['datasets_path']+'//'+SR_para['datasets_folder'])
+        SR_para = config_SR_para(SR_para,
+                                 SR_para['datasets_path'] + '//' + SR_para['datasets_folder'])
 
         SR_model_test = test_sr_net_acc(SR_para)
         SR_model_test.run()
@@ -97,13 +97,13 @@ def main_pipeline(input_path,
 
     RMBG_para['GPU'] = GPU_index
     RMBG_para['RMBG_datasets_path'] = NOW_path
-    RMBG_para['RMBG_datasets_folder'] = NOW_folder #+'//STEP_3_SR'
+    RMBG_para['RMBG_datasets_folder'] = NOW_folder  # +'//STEP_3_SR'
     RMBG_para['RMBG_output_dir'] = RMBG_output_dir
     RMBG_para['RMBG_output_folder'] = RMBG_output_folder
 
     if 'rmbg' in type:
-        RMBG_para = config_RMBG_para(RMBG_para, 
-        RMBG_para['RMBG_datasets_path']+'//'+RMBG_para['RMBG_datasets_folder'])
+        RMBG_para = config_RMBG_para(RMBG_para,
+                                     RMBG_para['RMBG_datasets_path'] + '//' + RMBG_para['RMBG_datasets_folder'])
 
         RMBG_model_test = test_rmbg_net_acc(RMBG_para)
         RMBG_model_test.run()
@@ -125,8 +125,8 @@ def main_pipeline(input_path,
     SEG_para['SEG_output_folder'] = SEG_output_folder
 
     if 'seg' in type:
-        SEG_para = config_SEG_para(SEG_para, 
-        SEG_para['SEG_datasets_path']+'//'+SEG_para['SEG_datasets_folder'])
+        SEG_para = config_SEG_para(SEG_para,
+                                   SEG_para['SEG_datasets_path'] + '//' + SEG_para['SEG_datasets_folder'])
 
         SEG_model_test = test_seg_net_acc(SEG_para)
         SEG_model_test.run()
@@ -158,17 +158,6 @@ def main_pipeline(input_path,
         MN_model.run()
 
 
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     torch.multiprocessing.set_start_method('spawn')
 
@@ -176,47 +165,30 @@ if __name__ == '__main__':
     now_pixel_size = 8
     target_pixel_size = 2
 
-    GPU_index  = '0'
+    GPU_index = '0'
     t_resolution = 10
 
-    SR_up_rate = int(now_pixel_size//target_pixel_size)
-    SR_up_rate = int(now_pixel_size/target_pixel_size/1*10)/10
-    input_datasets_path = '..//datasets_rush3d_001_02_patch1'   
-    # input_datasets_path = '..//datasets'   
-    # results_07082023_exp    datasets_07082023_exp
+    SR_up_rate = int(now_pixel_size // target_pixel_size)
+    SR_up_rate = int(now_pixel_size / target_pixel_size / 1 * 10) / 10
+    input_datasets_path = './datasets'
+    input_datasets_folder = 'test_07192023_2_113'
+    output_path = './results'
 
-
-    # for ii in range(11, 12, 1):
-    input_datasets_folder = 'patch_7' 
-
-    output_path = '..//results_rush3d_lost//'
     import os
-    if not os.path.exists(output_path): 
+    if not os.path.exists(output_path):
         os.mkdir(output_path)
 
-    
-    # _inten0
-
-    for i in range(1, 5):
-        output_dir = output_path +'SANeuron_'+input_datasets_folder+'_up'+str(SR_up_rate) +'_index'+str(i)
-        # try:
-        main_pipeline(input_path = input_datasets_path, 
-                    input_folder = input_datasets_folder, 
-                    SR_up_rate = SR_up_rate, 
-                    GPU_index = GPU_index, 
-                    output_dir = output_dir, 
-                    t_resolution = t_resolution ,
-                    output_folder = '', 
-                    type = 'deno_sr_rmbg_seg_mn',
-                    denoise_index = i)
-        # except:
-        #     pass
-
+    output_dir = output_path + 'DW3D_' + input_datasets_folder + '_up' + str(SR_up_rate) + '_index0'
+    main_pipeline(input_path=input_datasets_path,
+                  input_folder=input_datasets_folder,
+                  SR_up_rate=SR_up_rate,
+                  GPU_index=GPU_index,
+                  output_dir=output_dir,
+                  t_resolution=t_resolution,
+                  output_folder='',
+                  type='deno_sr_rmbg_seg_mn',
+                  denoise_index=0)
 
     '''
-    deno_
-    deno_tr_sr_rmbg_seg_mn _rmbg_seg_mn deno_sr_rmbg_seg_mn deno_
+    deno_tr_sr_rmbg_seg_mn
     '''
-
-
-
