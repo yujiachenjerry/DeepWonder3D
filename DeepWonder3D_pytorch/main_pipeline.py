@@ -15,7 +15,8 @@ import torch
 import sys
 import gc
 
-def clear_large_variables(threshold=1*1024*1024):  # 默认阈值为1MB
+
+def clear_large_variables(threshold=1 * 1024 * 1024):  # 默认阈值为1MB
     # 获取所有全局变量的名称和值
     global_vars = globals().copy()  # 使用.copy()以避免在迭代时修改字典
     for var_name, var_value in global_vars.items():
@@ -31,22 +32,20 @@ def clear_large_variables(threshold=1*1024*1024):  # 默认阈值为1MB
     print("Garbage collection completed.")
 
 
-
-def main_pipeline(input_path, 
-                    input_folder, 
-                    SR_up_rate, 
-                    GPU_index, 
-                    output_dir,
-                    t_resolution = 10,
-                    output_folder = '', 
-                    type = 'deno_sr_rmbg_seg_mn',
-                    denoise_index = 0):
-
+def main_pipeline(input_path,
+                  input_folder,
+                  SR_up_rate,
+                  GPU_index,
+                  output_dir,
+                  t_resolution=10,
+                  output_folder='',
+                  type='deno_sr_rmbg_seg_mn',
+                  denoise_index=0):
     NOW_path = input_path
     NOW_folder = input_folder
     ############ DENO #########################################
     ###########################################################
-    
+
     DENO_datasets_path = NOW_path
     DENO_datasets_folder = NOW_folder
     DENO_output_dir = output_dir
@@ -63,11 +62,11 @@ def main_pipeline(input_path,
     DENO_para['denoise_index'] = denoise_index
 
     if 'deno' in type:
-        DENO_para = config_DENO_para(DENO_para, 
-        DENO_datasets_path+'//'+DENO_datasets_folder)
+        DENO_para = config_DENO_para(DENO_para,
+                                     DENO_datasets_path + '//' + DENO_datasets_folder)
 
         DENO_model_test = test_DENO_net(DENO_para)
-        
+
         t_DENO = -time()
         DENO_model_test.run()
         t_DENO += time()
@@ -82,16 +81,16 @@ def main_pipeline(input_path,
 
     ############ TR #########################################
     ###########################################################
-    if t_resolution!=10 and ('tr' in type):
+    if t_resolution != 10 and ('tr' in type):
         TR_output_dir = output_dir
         TR_output_folder = 'STEP_2_TR'
 
         t_TR = -time()
-        adjust_time_resolution(input_path = NOW_path,
-                            input_folder = NOW_folder,
-                            output_path = TR_output_dir,
-                            output_folder = TR_output_folder,
-                            t_resolution = t_resolution)
+        adjust_time_resolution(input_path=NOW_path,
+                               input_folder=NOW_folder,
+                               output_path=TR_output_dir,
+                               output_folder=TR_output_folder,
+                               t_resolution=t_resolution)
         t_TR += time()
 
         NOW_path = output_dir
@@ -107,18 +106,18 @@ def main_pipeline(input_path,
     SR_output_folder = 'STEP_3_SR'
 
     from para_dict import SR_para, config_SR_para
-    
+
     SR_para['GPU'] = GPU_index
     SR_para['up_rate'] = SR_up_rate
-    SR_para['datasets_folder'] =  NOW_folder
-    SR_para['datasets_path'] =  NOW_path
+    SR_para['datasets_folder'] = NOW_folder
+    SR_para['datasets_path'] = NOW_path
     SR_para['output_dir'] = SR_output_dir
-    SR_para['SR_output_folder'] = SR_output_folder # 'SR'
+    SR_para['SR_output_folder'] = SR_output_folder  # 'SR'
 
-    print('SR_para -----> ',SR_para)
+    print('SR_para -----> ', SR_para)
     if 'sr' in type:
-        SR_para = config_SR_para(SR_para, 
-        SR_para['datasets_path']+'//'+SR_para['datasets_folder'])
+        SR_para = config_SR_para(SR_para,
+                                 SR_para['datasets_path'] + '//' + SR_para['datasets_folder'])
 
         SR_model_test = test_sr_net_acc(SR_para)
 
@@ -143,13 +142,13 @@ def main_pipeline(input_path,
 
     RMBG_para['GPU'] = GPU_index
     RMBG_para['RMBG_datasets_path'] = NOW_path
-    RMBG_para['RMBG_datasets_folder'] = NOW_folder #+'//STEP_3_SR'
+    RMBG_para['RMBG_datasets_folder'] = NOW_folder  # +'//STEP_3_SR'
     RMBG_para['RMBG_output_dir'] = RMBG_output_dir
     RMBG_para['RMBG_output_folder'] = RMBG_output_folder
 
     if 'rmbg' in type:
-        RMBG_para = config_RMBG_para(RMBG_para, 
-        RMBG_para['RMBG_datasets_path']+'//'+RMBG_para['RMBG_datasets_folder'])
+        RMBG_para = config_RMBG_para(RMBG_para,
+                                     RMBG_para['RMBG_datasets_path'] + '//' + RMBG_para['RMBG_datasets_folder'])
 
         RMBG_para['RMBG_batch_size'] = 1
         RMBG_model_test = test_rmbg_net_acc(RMBG_para)
@@ -180,8 +179,8 @@ def main_pipeline(input_path,
     SEG_para['SEG_output_folder'] = SEG_output_folder
 
     if 'seg' in type:
-        SEG_para = config_SEG_para(SEG_para, 
-        SEG_para['SEG_datasets_path']+'//'+SEG_para['SEG_datasets_folder'])
+        SEG_para = config_SEG_para(SEG_para,
+                                   SEG_para['SEG_datasets_path'] + '//' + SEG_para['SEG_datasets_folder'])
 
         SEG_model_test = test_seg_net_acc(SEG_para)
 
@@ -227,27 +226,16 @@ def main_pipeline(input_path,
         print('MN (merge neurons) is not in type')
         t_MN = -1
 
-
     ################ Save running time ##############
     #################################################
-    times = {'DENO':t_DENO, 'TR':t_TR, 'SR':t_SR, 'RMBG':t_RMBG, 'SEG':t_SEG, 'MN':t_MN}
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN}
     T_output_dir = output_dir
-    T_output_folder = os.path.join(T_output_dir,'times')
+    T_output_folder = os.path.join(T_output_dir, 'times')
     os.makedirs(T_output_folder, exist_ok=True)
     current_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     json_name = f'times_{current_time}.json'
     with open(os.path.join(T_output_folder, json_name), 'w') as f:
         json.dump(times, f, indent=4)
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -265,7 +253,6 @@ if __name__ == '__main__':
     input_datasets_folder = 'test'
     output_path = './results'
 
-    import os
     if not os.path.exists(output_path):
         os.mkdir(output_path)
 
@@ -279,10 +266,3 @@ if __name__ == '__main__':
                   output_folder='',
                   type='deno_tr_sr_rmbg_seg_mn',
                   denoise_index=0)
-
-    '''
-    deno_tr_sr_rmbg_seg_mn
-    '''
-
-
-
