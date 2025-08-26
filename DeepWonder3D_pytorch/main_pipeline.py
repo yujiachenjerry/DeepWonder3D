@@ -38,7 +38,6 @@ def main_pipeline(input_path,
                   GPU_index,
                   output_dir,
                   t_resolution=10,
-                  output_folder='',
                   type='deno_sr_rmbg_seg_mn',
                   denoise_index=0):
     NOW_path = input_path
@@ -263,6 +262,5 @@ if __name__ == '__main__':
                   GPU_index=GPU_index,
                   output_dir=output_dir,
                   t_resolution=t_resolution,
-                  output_folder='',
                   type='deno_tr_sr_rmbg_seg_mn',
                   denoise_index=0)
