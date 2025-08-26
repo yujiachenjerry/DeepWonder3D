@@ -102,7 +102,7 @@ view_merge_C, view_merge_id, all_single_neuron_trace = group_save(neuron_group, 
 
 
 # ===========================
-# Step 3: 3D Reconstruction
+# Step 3: 3D Localization
 # ===========================
 print(f"estimating Z...")
 psffit_data = loadmat_auto(psffit_matrix_file)
