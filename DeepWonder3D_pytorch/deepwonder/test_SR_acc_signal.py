@@ -214,7 +214,7 @@ class test_sr_net_acc():
             per_coor_list = self.coordinate_list[im_name]
             mean_per_coor_list = self.mean_coordinate_list[im_name]
             img = self.img_list[im_name]
-            mean_img = self.mean_img_list[im_name]
+            # mean_img = self.mean_img_list[im_name]
 
             out_h = int(img.shape[1]*signal_SR_up_rate)
             out_w = int(img.shape[2]*signal_SR_up_rate)
@@ -226,6 +226,7 @@ class test_sr_net_acc():
                                     num_workers=1)
             ######################################################################################
             for iteration, (im, per_coor) in enumerate(test_signal_sr_dataloader): 
+                # if signal_SR_up_rate>1:
                 SR_out, SR_out_da  = self.signal_SR_net(im.type(torch.FloatTensor) , signal_SR_up_rate)
                 # print('im -----> ',im.shape, ' SR_out -----> ',SR_out.shape)
                 ################################################################################################################
@@ -270,13 +271,13 @@ class test_sr_net_acc():
                     # signal_SR_img[init_s+c_slices, stack_start_w:stack_end_w, stack_start_h:stack_end_h] = \
                     # SR_out_da_s[patch_start_w:patch_end_w, patch_start_h:patch_end_h]
                     signal_SR_img[init_s+c_slices, stack_start_h:stack_end_h, stack_start_w:stack_end_w,] = \
-                    SR_out_da_s[patch_start_h:patch_end_h, patch_start_w:patch_end_w,].astype('uint16')
+                    np.clip(SR_out_da_s[patch_start_h:patch_end_h, patch_start_w:patch_end_w,], 0, 65535).astype('uint16')
 
             # norm_factor = self.signal_SR_norm_factor
             signal_SR_img = signal_SR_img[self.img_s//2:-self.img_s//2+1,:,:]
             print('signal_SR_img -----> ',signal_SR_img.shape)
-            save_img(signal_SR_img.astype('uint16'), self.signal_SR_norm_factor, self.pred_signal_output_path, im_name,if_nor=1)
-            # io.imsave(self.pred_signal_output_path + '/' + im_name  + '.tif', signal_SR_img.astype('uint16'))
+            save_img(np.clip(signal_SR_img, 0, 65535).astype('uint16'), self.signal_SR_norm_factor, self.pred_signal_output_path, im_name,if_nor=1)
+            # io.imsave(self.pred_signal_output_path + '/' + im_name  + '.tif', np.clip(signal_SR_img, 0, 65535).astype('uint16'))
 
 
 

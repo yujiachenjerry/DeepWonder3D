@@ -232,12 +232,12 @@ def test_preprocess_lessMemory_RMBG(args):
 
         noise_im = (noise_im).astype(np.float32)/normalize_factor
         
-        if input_pretype == 'mean':
-            noise_im_ave_single = np.mean(noise_im, axis=0)
-            noise_im_ave = np.zeros(noise_im.shape)
-            for i in range(0, noise_im.shape[0]):
-                noise_im_ave[i,:,:] = noise_im_ave_single
-            noise_im = noise_im-noise_im_ave
+        # if input_pretype == 'mean':
+        #     noise_im_ave_single = np.mean(noise_im, axis=0)
+        #     noise_im_ave = np.zeros(noise_im.shape)
+        #     for i in range(0, noise_im.shape[0]):
+        #         noise_im_ave[i,:,:] = noise_im_ave_single
+        #     noise_im = noise_im-noise_im_ave
 
         img_list[im_name] = noise_im
 
@@ -395,13 +395,13 @@ def train_preprocess_lessMemory_RMBG(args):
         # input_img = input_img.transpose(2,0,1)
         input_img = input_img.astype(np.float32)/normalize_factor
 
-        if input_pretype == 'mean':
-            print('input_pretype == mean')
-            input_img_ave_single = np.mean(input_img, axis=0)
-            input_img_ave = np.zeros(input_img.shape)
-            for i in range(0, input_img.shape[0]):
-                input_img_ave[i,:,:] = input_img_ave_single
-            input_img = input_img-input_img_ave
+        # if input_pretype == 'mean':
+        #     print('input_pretype == mean')
+        #     input_img_ave_single = np.mean(input_img, axis=0)
+        #     input_img_ave = np.zeros(input_img.shape)
+        #     for i in range(0, input_img.shape[0]):
+        #         input_img_ave[i,:,:] = input_img_ave_single
+        #     input_img = input_img-input_img_ave
 
         # input_pretype = 'guassian'
         import torch.nn as nn
@@ -518,13 +518,13 @@ def train_preprocess_lessMemory_RMBG2D(args):
         # input_img = input_img.transpose(2,0,1)
         input_img = input_img.astype(np.float32)/normalize_factor
 
-        if input_pretype == 'mean':
-            print('input_pretype == mean')
-            input_img_ave_single = np.mean(input_img, axis=0)
-            input_img_ave = np.zeros(input_img.shape)
-            for i in range(0, input_img.shape[0]):
-                input_img_ave[i,:,:] = input_img_ave_single
-            input_img = input_img-input_img_ave
+        # if input_pretype == 'mean':
+        #     print('input_pretype == mean')
+        #     input_img_ave_single = np.mean(input_img, axis=0)
+        #     input_img_ave = np.zeros(input_img.shape)
+        #     for i in range(0, input_img.shape[0]):
+        #         input_img_ave[i,:,:] = input_img_ave_single
+        #     input_img = input_img-input_img_ave
 
         # input_img = input_img-np.min(input_img)
         # norm_rate = 2000

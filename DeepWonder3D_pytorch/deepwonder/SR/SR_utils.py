@@ -40,7 +40,7 @@ def save_img(all_img, norm_factor, output_path, im_name, tag='', if_nor=1):
         all_img = all_img - np.min(all_img)
         all_img = all_img / np.max(all_img) * 65535
         
-        all_img = all_img.astype('uint16')
+        all_img = np.clip(all_img, 0, 65535).astype('uint16')
     '''
     , if_cut=0
     if if_cut:

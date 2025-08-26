@@ -206,7 +206,7 @@ class test_DENO_net():
                 # print('img ---> ',np.max(img), np.min(img))
                 img = img-img.mean() #np.mean(img) 
                 # print('img ---> ',np.max(img), np.min(img))
-                if 1:
+                if 0:
                     print('DENO input_pretype == mean')
                     im_ave_single = np.mean(img, axis=0)
                     im_ave = np.zeros(img.shape)

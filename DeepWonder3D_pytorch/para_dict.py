@@ -13,15 +13,18 @@ def get_data_fingerprint(data_path):
     im_s_list = []
     import os
     print('data_path -----> ',data_path)
-    for im_name in list(os.walk(data_path, topdown=False))[-1][-1]:
+    for im_name in os.listdir(data_path):
         if '.tif' in im_name:
             import tifffile as tiff
             im_dir = data_path+'//'+im_name
-            im = tiff.imread(im_dir)
 
-            im_w = im.shape[2]
-            im_h = im.shape[1]
-            im_s = im.shape[0]
+            with tiff.TiffFile(im_dir) as tif:
+                im_s = len(tif.pages)
+                im_h, im_w = tif.pages[0].shape
+            # im = tiff.imread(im_dir)
+            # im_w = im.shape[2]
+            # im_h = im.shape[1]
+            # im_s = im.shape[0]
 
             im_w_list.append(im_w)
             im_h_list.append(im_h)
@@ -59,11 +62,11 @@ def config_DENO_para(DENO_para, DENO_path, GPU_M=48):
     if DENO_para['DENO_img_w']>256:
         DENO_para['DENO_img_w'] = 256
     
-    DENO_para['DENO_batch_size'] = math.floor(GPU_M*1000/DENO_GPU_list[str(DENO_para['DENO_img_w'])])
+    DENO_para['DENO_batch_size'] = max(math.floor(GPU_M*1000/DENO_GPU_list[str(DENO_para['DENO_img_w'])]) - 1, 1)
 
     DENO_para['DENO_img_h'] = DENO_para['DENO_img_w']
     if DENO_para['DENO_img_w']>=64:
-        DENO_para['DENO_img_s'] = DENO_para['DENO_img_w']//2
+        DENO_para['DENO_img_s'] = DENO_para['DENO_img_w']//4
     if DENO_para['DENO_img_w']<64:
         DENO_para['DENO_img_s'] = DENO_para['DENO_img_w']
 
@@ -155,7 +158,7 @@ SR_para = { 'GPU' : '1',
             'img_w' : 48,
             'img_h' : 48,
             'img_s' : 5,
-            'batch_size' : 4,
+            'batch_size' : 1,
             ###########################
             'signal_SR_img_s' : 5,
             'gap_w' : 32,
@@ -175,7 +178,7 @@ SR_para = { 'GPU' : '1',
             'signal_SR_f_maps' : 16,  # 32 16
             'signal_SR_in_c' : 5,
             'signal_SR_out_c' : 1,
-            'signal_SR_input_pretype' : 'mean',
+            'signal_SR_input_pretype' : '',  # mean
             ###########################
             'mean_SR_norm_factor' : 1,
             'mean_SR_pth_path' : "pth",
@@ -210,7 +213,7 @@ def config_RMBG_para(RMBG_para, RMBG_path, GPU_M=48):
                     '512':23855}
     RMBG_para['RMBG_img_w'] = 256
     import math
-    RMBG_para['RMBG_batch_size'] = math.floor(GPU_M*1000/4/SR_GPU_list[str(RMBG_para['RMBG_img_w'])])
+    RMBG_para['RMBG_batch_size'] = max(math.floor(GPU_M*1000/4/SR_GPU_list[str(RMBG_para['RMBG_img_w'])]) - 1, 1)
     min_value = min(min_im_w, min_im_h)
     RMBG_para['RMBG_img_h'] = RMBG_para['RMBG_img_w']
     if RMBG_para['RMBG_img_w']>=128:
@@ -286,7 +289,7 @@ def config_SEG_para(SEG_para, SEG_path, GPU_M=48):
 
     SEG_para['SEG_img_w'] = 256
     import math
-    SEG_para['SEG_batch_size'] = math.floor(GPU_M*1000/8/SEG_GPU_list[str(SEG_para['SEG_img_w'])])
+    SEG_para['SEG_batch_size'] = max(math.floor(GPU_M*1000/8/SEG_GPU_list[str(SEG_para['SEG_img_w'])]) - 1, 1)
 
     min_value = min(min_im_w, min_im_h)
     SEG_para['SEG_img_h'] = SEG_para['SEG_img_w']

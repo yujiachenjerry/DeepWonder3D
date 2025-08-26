@@ -115,6 +115,7 @@ class calculate_neuron():
         # print('SR_folder : ',SR_folder)
         SR_name_list = []
         SR_list = {}
+        # SR_folder = '..//results_07082023_exp//SANeuron_07082023_18_view_up5//STEP_3_SR'
         for SR_name in list(os.walk(SR_folder, topdown=False))[-1][-1]:
             # print('im_name -----> ',im_name)
             if '.tif' in SR_name:
@@ -145,12 +146,14 @@ class calculate_neuron():
         # print('SEG dir : ',SEG_dir)
         # print('SR dir : ',SR_dir)
         img_SEG = tiff.imread(SEG_dir)
+        print('img_SEG ---> ',img_SEG.shape)
+        # img_SEG = img_SEG[0:2, :, :]
         img_RMBG = tiff.imread(RMBG_dir)
         img_SR = tiff.imread(SR_dir)
 
         img_SEG1 = img_SEG.copy()
         img_RMBG1 = img_RMBG.copy()
-        img_SR1 = img_SR.copy()
+        # img_SR1 = img_SR.copy()
         #############################################################################
         # whole_mask_list = merge_neuron_SEG_mul(img_SEG1, img_RMBG1)
         self.inten_thres = 0
@@ -193,7 +196,7 @@ class calculate_neuron():
         if not os.path.exists(f_con_output_path): 
             os.mkdir(f_con_output_path)
         img_f_contours_name = f_con_output_path+'//'+im_name+'_f_con.tif'
-        final_contours = final_contours.astype('uint16')
+        final_contours = final_contours.clip(0, 65535).astype('uint16')
         io.imsave(img_f_contours_name, final_contours)
 
         from deepwonder.MN.merge_neuron_f import list2masks
@@ -206,14 +209,14 @@ class calculate_neuron():
         final_masks_bina = final_masks
         final_masks_bina[final_masks_bina>0]=1
         img_f_masks_bina_name = f_mask_bina_output_path+'//'+im_name+'_f_mask_bina.tif'
-        final_masks_bina = final_masks_bina.astype('uint16')
+        final_masks_bina = final_masks_bina.clip(0, 65535).astype('uint16')
         io.imsave(img_f_masks_bina_name, final_masks_bina)
 
         w_con_output_path = self.MN_output_path+'//w_con'+'_'+str(self.inten_thres)
         if not os.path.exists(w_con_output_path): 
             os.mkdir(w_con_output_path)
         img_w_contours_name = w_con_output_path+'//'+im_name+'_w_con.tif'
-        whole_contours = whole_contours.astype('uint16')
+        whole_contours = whole_contours.clip(0, 65535).astype('uint16')
 
         if 0:
             if len(whole_contours.shape)==3:
@@ -223,14 +226,14 @@ class calculate_neuron():
 
         if 0:
             img_f_contours_name = self.MN_output_path+'//'+im_name+'_mask_stack.tif'
-            all_neuron_mask = all_neuron_mask.astype('uint16')
+            all_neuron_mask = all_neuron_mask.clip(0, 65535).astype('uint16')
             io.imsave(img_f_contours_name, all_neuron_mask)
 
             # test_list = listAddtrace(test_list, img_RMBG, mode='update', trace_mode='all')
             # test_list = listAddcontours_Laplacian_pytorch(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
             # test_contours,test_whole_contours = list2contours(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
             test_contours_name = self.MN_output_path+'//'+im_name+'_test_con.tif'
-            all_neuron_remain_mask = all_neuron_remain_mask.astype('uint16')
+            all_neuron_remain_mask = all_neuron_remain_mask.clip(0, 65535).astype('uint16')
             io.imsave(test_contours_name, all_neuron_remain_mask)
 
             '''
@@ -240,7 +243,7 @@ class calculate_neuron():
             test_list_masks[test_list_masks>0]=1
 
             img_f_masks_bina_name = self.MN_output_path+'//'+im_name+'_test_f_mask_bina.tif'
-            final_masks_bina = final_masks_bina.astype('uint16')
+            final_masks_bina = final_masks_bina.clip(0, 65535).astype('uint16')
             io.imsave(img_f_masks_bina_name, test_list_masks)
             '''
 
@@ -259,7 +262,7 @@ class calculate_neuron():
         scio.savemat(mat_save_name, {'final_mask_list':whole_mask_list, 'final_contours':final_contours})
 
         img_w_contours_name = self.MN_output_path+'//'+im_name+'.tif'
-        whole_contours = whole_contours.astype('uint16')
+        whole_contours = whole_contours.clip(0, 65535).astype('uint16')
 
 
     #########################################################################

@@ -87,13 +87,13 @@ def test_preprocess_lessMemory_RMBG(args):
         noise_im = (noise_im).astype(np.float32)/normalize_factor
         # print('normalize_factor ---> ',normalize_factor)
         
-        if input_pretype == 'mean':
-            noise_im_ave_single = np.mean(noise_im, axis=0)
-            noise_im_ave = np.zeros(noise_im.shape)
-            for i in range(0, noise_im.shape[0]):
-                noise_im_ave[i,:,:] = noise_im_ave_single
-            noise_im = noise_im-noise_im_ave
-            print('input_pretype == mean')
+        # if input_pretype == 'mean':
+        #     noise_im_ave_single = np.mean(noise_im, axis=0)
+        #     noise_im_ave = np.zeros(noise_im.shape)
+        #     for i in range(0, noise_im.shape[0]):
+        #         noise_im_ave[i,:,:] = noise_im_ave_single
+        #     noise_im = noise_im-noise_im_ave
+        #     print('input_pretype == mean')
 
         '''
         if_norm1 = 0

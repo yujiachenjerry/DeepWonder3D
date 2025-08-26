@@ -185,7 +185,8 @@ def merge_neuron_SEG_mul_inten(mask_stack,
     print('[4 Time Cost: %.0d s] \n'%(time_cost), end=' ')
     # remain_mask part is so slow
     # all_neuron_remain_mask = remain_mask_test_list(w_g_neuron_list)
-    all_neuron_remain_mask = remain_mask(all_neuron_mask)
+    # all_neuron_remain_mask = remain_mask(all_neuron_mask) 
+    all_neuron_remain_mask = all_neuron_mask
     time_cost = time.time() - time_start
     print('[5 Time Cost: %.0d s] \n'%(time_cost), end=' ')
     # w_g_neuron_list1 = w_g_neuron_list #.clone()

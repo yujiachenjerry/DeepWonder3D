@@ -87,13 +87,13 @@ def test_preprocess_lessMemory_DENO(args):
         noise_im = (noise_im).astype(np.float32)/normalize_factor
         # print('normalize_factor ---> ',normalize_factor)
         
-        if input_pretype == 'mean':
-            noise_im_ave_single = np.mean(noise_im, axis=0)
-            noise_im_ave = np.zeros(noise_im.shape)
-            for i in range(0, noise_im.shape[0]):
-                noise_im_ave[i,:,:] = noise_im_ave_single
-            noise_im = noise_im-noise_im_ave
-            print('input_pretype == mean')
+        # if input_pretype == 'mean':
+        #     noise_im_ave_single = np.mean(noise_im, axis=0)
+        #     noise_im_ave = np.zeros(noise_im.shape)
+        #     for i in range(0, noise_im.shape[0]):
+        #         noise_im_ave[i,:,:] = noise_im_ave_single
+        #     noise_im = noise_im-noise_im_ave
+        #     print('input_pretype == mean')
 
         '''
         if_norm1 = 0
@@ -166,20 +166,15 @@ def test_preprocess_lessMemory_DENO_lm(args):
 
     im_name_list = list(os.walk(im_folder, topdown=False))[-1][-1]
     print('im_folder -----> ',im_folder, init_index, end_index)
-    print('im_name_list -----> ',im_name_list[init_index: end_index])
+    print('im_name_list -----> ',im_name_list)
     # print('im_name_list -----> ',im_name_list)
-    lost_im_name_list = list(os.walk('patch7_txt', topdown=False))[-1][-1]
-    print('lost_im_name_list ---> ',lost_im_name_list)
 
-    # for im_name in im_name_list[init_index: end_index]:
-    for im_name in lost_im_name_list[init_index: end_index]:
+    for im_name in im_name_list:
         # print('im_name -----> ',im_name)
         im_name = im_name.replace('.txt','')
         # if '.tif' in im_name:
         print('im_name -----> ',im_name)
-        if '_g_0.tif' in im_name or '_g_1.tif' in im_name or '_g_2.tif' in im_name or '_g_3.tif' in im_name or '_g_4.tif' in im_name \
-        or '_g_5.tif' in im_name or '_g_6.tif' in im_name or '_g_7.tif' in im_name or '_g_8.tif' in im_name or '_g_9.tif' in im_name:
-            
+        if '.tif' in im_name:
             im_dir = im_folder+'//'+im_name
             '''
             if '.tiff' in im_name:

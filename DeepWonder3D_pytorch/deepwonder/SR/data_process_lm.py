@@ -189,14 +189,14 @@ def train_preprocess_signal_SR_lm(args):
         if im.shape[0]>select_img_num:
             im = im[0:select_img_num,:,:]
 
-        if input_pretype == 'mean':
-            print('input_pretype == mean')
-            im_ave_single = np.mean(im, axis=0)
-            im_ave = np.zeros(im.shape)
-            for i in range(0, im.shape[0]):
-                im_ave[i,:,:] = im_ave_single
-            im = im-im_ave
-            del im_ave
+        # if input_pretype == 'mean':
+        #     print('input_pretype == mean')
+        #     im_ave_single = np.mean(im, axis=0)
+        #     im_ave = np.zeros(im.shape)
+        #     for i in range(0, im.shape[0]):
+        #         im_ave[i,:,:] = im_ave_single
+        #     im = im-im_ave
+        #     del im_ave
 
         # img_list[im_name] = im
         whole_w = im.shape[2]
@@ -277,14 +277,14 @@ def test_preprocess_signal_SR(args):
         im = (im).astype(np.float32)/norm_factor
         im = im.squeeze()
 
-        # input_pretype = 'mean'
-        if input_pretype == 'mean':
-            print('input_pretype == mean')
-            im_ave_single = np.mean(im, axis=0)
-            im_ave = np.zeros(im.shape)
-            for i in range(0, im.shape[0]):
-                im_ave[i,:,:] = im_ave_single
-            im = im-im_ave
+        # # input_pretype = 'mean'
+        # if input_pretype == 'mean':
+        #     print('input_pretype == mean')
+        #     im_ave_single = np.mean(im, axis=0)
+        #     im_ave = np.zeros(im.shape)
+        #     for i in range(0, im.shape[0]):
+        #         im_ave[i,:,:] = im_ave_single
+        #     im = im-im_ave
 
         image_list[im_name.replace('.tif','')] = im
 
@@ -514,14 +514,14 @@ def test_preprocess_signal_mean_SR(args):
         im = (im).astype(np.float32)/signal_SR_norm_factor
         im = im.squeeze()
 
-        # input_pretype = 'mean'
-        if signal_SR_input_pretype == 'mean':
-            print('input_pretype == mean')
-            im_ave_single = np.mean(im, axis=0)
-            im_ave = np.zeros(im.shape)
-            for i in range(0, im.shape[0]):
-                im_ave[i,:,:] = im_ave_single
-            im = im-im_ave
+        # # input_pretype = 'mean'
+        # if signal_SR_input_pretype == 'mean':
+        #     print('input_pretype == mean')
+        #     im_ave_single = np.mean(im, axis=0)
+        #     im_ave = np.zeros(im.shape)
+        #     for i in range(0, im.shape[0]):
+        #         im_ave[i,:,:] = im_ave_single
+        #     im = im-im_ave
 
         image_list[im_name.replace('.tif','')] = im
         image_mean_list[im_name.replace('.tif','')] = im_ave_single

@@ -165,13 +165,13 @@ class test_rmbg_net_acc():
                 img = tiff.imread(img_dir)
 
                 
-                if self.RMBG_input_pretype == 'mean':
-                    noise_im_ave_single = np.mean(img, axis=0)
-                    noise_im_ave = np.zeros(img.shape)
-                    for i in range(0, img.shape[0]):
-                        noise_im_ave[i,:,:] = noise_im_ave_single
-                    img = img-noise_im_ave
-                    # print('input_pretype == mean')
+                # if self.RMBG_input_pretype == 'mean':
+                #     noise_im_ave_single = np.mean(img, axis=0)
+                #     noise_im_ave = np.zeros(img.shape)
+                #     for i in range(0, img.shape[0]):
+                #         noise_im_ave[i,:,:] = noise_im_ave_single
+                #     img = img-noise_im_ave
+                #     print('RMBG input_pretype == mean')
                 
                 ## RMBG normalize ##
                 img = img-np.min(img)
@@ -259,11 +259,11 @@ class test_rmbg_net_acc():
                     patch_start_s = int(per_coor['patch_start_s'][RMBG_i])
                     patch_end_s = int(per_coor['patch_end_s'][RMBG_i])
                     RMBG_img[stack_start_s:stack_end_s, stack_start_h:stack_end_h, stack_start_w:stack_end_w] = \
-                    RMBG_out_s[patch_start_s:patch_end_s, patch_start_h:patch_end_h, patch_start_w:patch_end_w].astype('uint16')
+                    np.clip(RMBG_out_s[patch_start_s:patch_end_s, patch_start_h:patch_end_h, patch_start_w:patch_end_w], 0, 65535).astype('uint16')
 
             # print(np.max(RMBG_img), np.min(RMBG_img))
             # RMBG_img = 
-            save_img(RMBG_img.astype('uint16'), 
+            save_img(np.clip(RMBG_img, 0, 65535).astype('uint16'), 
                      self.RMBG_norm_factor, 
                      self.RMBG_output_path, 
                      im_name, tag='', if_nor=0,

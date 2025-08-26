@@ -188,16 +188,16 @@ def train_preprocess_signal_SR(args):
         if im.shape[0]>select_img_num:
             im = im[0:select_img_num,:,:]
         
-        if input_pretype == 'mean':
-            print('input_pretype == mean')
-            im_ave_single = np.mean(im, axis=0)
-            im_ave = np.zeros(im.shape).astype(np.float32)
-            for i in range(0, im.shape[0]):
-                im_ave[i,:,:] = im_ave_single
-            im = im-im_ave
-            del im_ave
-            import gc
-            gc.collect()
+        # if input_pretype == 'mean':
+        #     print('input_pretype == mean')
+        #     im_ave_single = np.mean(im, axis=0)
+        #     im_ave = np.zeros(im.shape).astype(np.float32)
+        #     for i in range(0, im.shape[0]):
+        #         im_ave[i,:,:] = im_ave_single
+        #     im = im-im_ave
+        #     del im_ave
+        #     import gc
+        #     gc.collect()
             
         img_list[im_name] = im
         whole_w = im.shape[2]
@@ -279,14 +279,14 @@ def test_preprocess_signal_SR(args):
         im = (im).astype(np.float32)/norm_factor
         im = im.squeeze()
 
-        # input_pretype = 'mean'
-        if input_pretype == 'mean':
-            print('input_pretype == mean')
-            im_ave_single = np.mean(im, axis=0)
-            im_ave = np.zeros(im.shape)
-            for i in range(0, im.shape[0]):
-                im_ave[i,:,:] = im_ave_single
-            im = im-im_ave
+        # # input_pretype = 'mean'
+        # if input_pretype == 'mean':
+        #     print('input_pretype == mean')
+        #     im_ave_single = np.mean(im, axis=0)
+        #     im_ave = np.zeros(im.shape)
+        #     for i in range(0, im.shape[0]):
+        #         im_ave[i,:,:] = im_ave_single
+        #     im = im-im_ave
 
         image_list[im_name.replace('.tif','')] = im
 
@@ -495,7 +495,7 @@ def test_preprocess_signal_mean_SR(args):
     datasets_path = args.datasets_path
 
     im_folder = datasets_path+'//'+datasets_folder
-    # print('im_folder -----> ',im_folder)
+    print('im_folder -----> ',im_folder)
 
     name_list = []
     image_list={}
@@ -512,8 +512,9 @@ def test_preprocess_signal_mean_SR(args):
     im_name_list = list(os.walk(im_folder, topdown=False))[-1][-1]
     for im_name in im_name_list[init_index: end_index]:
         # if '.tif' in im_name:
-        if '_g_0.tif' in im_name or '_g_1.tif' in im_name or '_g_2.tif' in im_name or '_g_3.tif' in im_name or '_g_4.tif' in im_name \
-        or '_g_5.tif' in im_name or '_g_6.tif' in im_name or '_g_7.tif' in im_name or '_g_8.tif' in im_name or '_g_9.tif' in im_name:
+        if '.tif' in im_name:
+        # if '_g_0.tif' in im_name or '_g_1.tif' in im_name or '_g_2.tif' in im_name or '_g_3.tif' in im_name or '_g_4.tif' in im_name \
+        # or '_g_5.tif' in im_name or '_g_6.tif' in im_name or '_g_7.tif' in im_name or '_g_8.tif' in im_name or '_g_9.tif' in im_name:
             name_list.append(im_name.replace('.tif',''))
             # print('im_name -----> ',im_name)
             im_dir = im_folder+'//'+im_name
@@ -526,14 +527,14 @@ def test_preprocess_signal_mean_SR(args):
             im = (im).astype(np.float32)/signal_SR_norm_factor
             im = im.squeeze()
 
-            # input_pretype = 'mean'
-            if signal_SR_input_pretype == 'mean':
-                print('SR input_pretype == mean')
-                im_ave_single = np.mean(im, axis=0)
-                im_ave = np.zeros(im.shape)
-                for i in range(0, im.shape[0]):
-                    im_ave[i,:,:] = im_ave_single
-                im = im-im_ave
+            # # input_pretype = 'mean'
+            # if signal_SR_input_pretype == 'mean':
+            #     print('SR input_pretype == mean')
+            #     im_ave_single = np.mean(im, axis=0)
+            #     im_ave = np.zeros(im.shape)
+            #     for i in range(0, im.shape[0]):
+            #         im_ave[i,:,:] = im_ave_single
+            #     im = im-im_ave
 
             im = im - np.min(im)
             im = im/np.max(im)*200
@@ -541,7 +542,7 @@ def test_preprocess_signal_mean_SR(args):
             im = np.pad(im, ((img_s2//2, img_s2//2),(0,0),(0,0)),'reflect')
             print('im -----> ',im.shape)
             image_list[im_name.replace('.tif','')] = im
-            image_mean_list[im_name.replace('.tif','')] = im_ave_single
+            image_mean_list[im_name.replace('.tif','')] = np.mean(im, axis=0)
 
             # print(im.shape)
             whole_w = im.shape[2]

@@ -110,7 +110,7 @@ def save_img(all_img, norm_factor, output_path, im_name, tag='', if_nor=1,
         # print(np.max(all_img), np.min(all_img))
         all_img = all_img / np.max(all_img) * 65535
         # print(np.max(all_img), np.min(all_img))
-        all_img = all_img.astype('uint16')
+        all_img = np.clip(all_img, 0, 65535).astype('uint16')
     '''
     , if_cut=0
     if if_cut:
@@ -124,7 +124,7 @@ def save_img(all_img, norm_factor, output_path, im_name, tag='', if_nor=1,
         # print('if_filter_ourliers')
         # pass
 
-    all_img = all_img.astype('uint16')
+    all_img = np.clip(all_img, 0, 65535).astype('uint16')
     io.imsave(all_img_name, all_img)
 
 
