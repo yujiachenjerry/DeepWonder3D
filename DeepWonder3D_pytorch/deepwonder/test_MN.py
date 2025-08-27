@@ -23,10 +23,9 @@ warnings.filterwarnings('ignore')
 from deepwonder.utils import save_img_train, save_para_dict, UseStyle, save_img, get_netpara
 
 
-#############################################################################################################################################
 #############################################################################
 #############################################################################
-class calculate_neuron():
+class calculate_neuron:
     def __init__(self, mn_para):
         self.RMBG_datasets_folder = ''
         self.RMBG_datasets_path = ''
@@ -218,33 +217,33 @@ class calculate_neuron():
         img_w_contours_name = w_con_output_path + '//' + im_name + '_w_con.tif'
         whole_contours = whole_contours.clip(0, 65535).astype('uint16')
 
-        if 0:
-            if len(whole_contours.shape) == 3:
-                if len(whole_mask_list) > 0:
-                    io.imsave(img_w_contours_name, whole_contours)
-
-        if 0:
-            img_f_contours_name = self.MN_output_path + '//' + im_name + '_mask_stack.tif'
-            all_neuron_mask = all_neuron_mask.clip(0, 65535).astype('uint16')
-            io.imsave(img_f_contours_name, all_neuron_mask)
-
-            # test_list = listAddtrace(test_list, img_RMBG, mode='update', trace_mode='all')
-            # test_list = listAddcontours_Laplacian_pytorch(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
-            # test_contours,test_whole_contours = list2contours(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
-            test_contours_name = self.MN_output_path + '//' + im_name + '_test_con.tif'
-            all_neuron_remain_mask = all_neuron_remain_mask.clip(0, 65535).astype('uint16')
-            io.imsave(test_contours_name, all_neuron_remain_mask)
-
-            '''
-            from deepwonder.MN.merge_neuron_f import list2masks
-            test_list_masks, whole_masks = list2masks(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
-            final_masks_bina = final_masks
-            test_list_masks[test_list_masks>0]=1
-
-            img_f_masks_bina_name = self.MN_output_path+'//'+im_name+'_test_f_mask_bina.tif'
-            final_masks_bina = final_masks_bina.clip(0, 65535).astype('uint16')
-            io.imsave(img_f_masks_bina_name, test_list_masks)
-            '''
+        # if 0:
+        #     if len(whole_contours.shape) == 3:
+        #         if len(whole_mask_list) > 0:
+        #             io.imsave(img_w_contours_name, whole_contours)
+        #
+        # if 0:
+        #     img_f_contours_name = self.MN_output_path + '//' + im_name + '_mask_stack.tif'
+        #     all_neuron_mask = all_neuron_mask.clip(0, 65535).astype('uint16')
+        #     io.imsave(img_f_contours_name, all_neuron_mask)
+        #
+        #     # test_list = listAddtrace(test_list, img_RMBG, mode='update', trace_mode='all')
+        #     # test_list = listAddcontours_Laplacian_pytorch(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
+        #     # test_contours,test_whole_contours = list2contours(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
+        #     test_contours_name = self.MN_output_path + '//' + im_name + '_test_con.tif'
+        #     all_neuron_remain_mask = all_neuron_remain_mask.clip(0, 65535).astype('uint16')
+        #     io.imsave(test_contours_name, all_neuron_remain_mask)
+        #
+        #     '''
+        #     from deepwonder.MN.merge_neuron_f import list2masks
+        #     test_list_masks, whole_masks = list2masks(test_list, img_RMBG.shape[1], img_RMBG.shape[2])
+        #     final_masks_bina = final_masks
+        #     test_list_masks[test_list_masks>0]=1
+        #
+        #     img_f_masks_bina_name = self.MN_output_path+'//'+im_name+'_test_f_mask_bina.tif'
+        #     final_masks_bina = final_masks_bina.clip(0, 65535).astype('uint16')
+        #     io.imsave(img_f_masks_bina_name, test_list_masks)
+        #     '''
 
         mat_output_path = self.MN_output_path + '//mat' + '_' + str(self.inten_thres)
         if not os.path.exists(mat_output_path):

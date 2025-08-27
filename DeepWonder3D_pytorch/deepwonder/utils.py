@@ -6,6 +6,51 @@ from skimage import io
 import yaml
 import psutil
 from thop import profile
+import torch
+import re
+
+
+def fullwidth_to_halfwidth(s: str) -> str:
+    """Convert full-width characters to half-width characters."""
+    result = []
+    for char in s:
+        code = ord(char)
+        if code == 0x3000:  # Full-width space
+            code = 32
+        elif 0xFF01 <= code <= 0xFF5E:  # Full-width characters
+            code -= 0xFEE0
+        result.append(chr(code))
+    return ''.join(result)
+
+
+def validate_gpu_index(gpu_index: str) -> str:
+    """
+    Validate the GPU_index string.
+    1. Automatically convert full-width characters to half-width.
+    2. Must be a comma-separated list of non-negative integers.
+    3. Each index must be less than the total number of GPUs on the machine.
+    4. Automatically remove duplicates and sort the indices.
+    """
+    # Convert full-width to half-width
+    gpu_index = fullwidth_to_halfwidth(gpu_index.strip())
+
+    # Format check
+    pattern = re.compile(r'^\d+(,\d+)*$')
+    if not pattern.match(gpu_index):
+        return ''
+
+    try:
+        indices = sorted(set(int(i) for i in gpu_index.split(',')))
+    except ValueError:
+        return ''
+
+    total_gpus = torch.cuda.device_count()
+
+    if any(i < 0 or i >= total_gpus for i in indices):
+        return ''
+
+    # Return the cleaned string
+    return ','.join(map(str, indices))
 
 
 def save_times_json(times: dict, output_dir: str):

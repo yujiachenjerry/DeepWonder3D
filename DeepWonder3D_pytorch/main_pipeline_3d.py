@@ -5,7 +5,7 @@ from deepwonder.test_MN import calculate_neuron
 from deepwonder.test_DENO_acc import test_DENO_net
 from deepwonder.test_TR import adjust_time_resolution, get_data_fingerprint
 from deepwonder.test_VM import run_view_merging_pipeline
-from deepwonder.utils import save_times_json
+from deepwonder.utils import save_times_json, validate_gpu_index
 
 import os
 import json
@@ -299,6 +299,7 @@ if __name__ == '__main__':
     ###############################################
     # MAIN
     ###############################################
+    GPU_index = validate_gpu_index(GPU_index)
     SR_up_rate = int(now_pixel_size / target_pixel_size / 1 * 10) / 10
     if not os.path.exists(output_path):
         os.mkdir(output_path)
