@@ -311,4 +311,4 @@ if __name__ == '__main__':
                   GPU_index=GPU_index,
                   output_dir=output_dir,
                   t_resolution=t_resolution,
-                  type='vm')
+                  type='deno_tr_sr_rmbg_seg_mn_vm')
