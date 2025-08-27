@@ -16,11 +16,11 @@ cen_id = 113
 
 # clustering parameters
 cutoff_spatial = 20  # Euclidean distance
-cutoff_temporal = 0.75  # correlation coefficient
+cutoff_temporal = 0.7  # correlation coefficient
 
 # input/output paths
 DATA = './result/STEP_6_MN/mat_0'
-SAVE = './STEP_7_VM'
+SAVE = './result/STEP_7_VM'
 psffit_matrix_file = './pth/psffit_matrix.mat'
 
 # ===========================

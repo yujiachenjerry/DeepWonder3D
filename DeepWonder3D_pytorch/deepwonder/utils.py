@@ -1,14 +1,40 @@
 import os
+import json
+import datetime
 import numpy as np
 from skimage import io
 import yaml
+import psutil
 from thop import profile
 
-import os
-import psutil
 
+def save_times_json(times: dict, output_dir: str):
+    """
+    Save a dictionary of times to a JSON file with a timestamp in the filename.
 
+    Args:
+        times (dict): The dictionary containing timing data.
+        output_dir (str): The base directory where the file will be saved.
 
+    Returns:
+        str: The full path of the saved JSON file.
+    """
+    # Create the 'times' subfolder inside the output directory
+    times_folder = os.path.join(output_dir, 'times')
+    os.makedirs(times_folder, exist_ok=True)
+
+    # Generate a filename with the current timestamp
+    current_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    json_filename = f'times_{current_time}.json'
+
+    # Full path to the JSON file
+    json_path = os.path.join(times_folder, json_filename)
+
+    # Save the dictionary as a JSON file
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(times, f, indent=4, ensure_ascii=False)
+
+    return json_path
 
 
 def replace_large_pixels_with_min(image, threshold):
@@ -23,6 +49,7 @@ def replace_large_pixels_with_min(image, threshold):
 
     return image
 
+
 def process_image_sequence(image_sequence, threshold):
     # Get the number of images in the sequence
     num_images = image_sequence.shape[0]
@@ -32,7 +59,6 @@ def process_image_sequence(image_sequence, threshold):
         image_sequence[i] = replace_large_pixels_with_min(image_sequence[i], threshold)
 
     return image_sequence
-
 
 
 def get_gpu_mem_info(gpu_id=0):
@@ -64,12 +90,14 @@ def get_cpu_mem_info():
     mem_free = round(psutil.virtual_memory().available / 1024 / 1024, 2)
     mem_process_used = round(psutil.Process(os.getpid()).memory_info().rss / 1024 / 1024, 2)
     return mem_total, mem_free, mem_process_used
-    
+
+
 #########################################################################
 #########################################################################
 def print_dict(dictionary):
     for key, value in dictionary.items():
         print(f"\033[91m{key}\033[0m: {value}")
+
 
 def get_netpara(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -97,8 +125,8 @@ def save_para_dict(save_path, para_dict):
                 f.write(now_str)
 
 
-def save_img(all_img, norm_factor, output_path, im_name, tag='', if_nor=1, 
-             if_filter_ourliers=0, ourliers_thres = 60000):
+def save_img(all_img, norm_factor, output_path, im_name, tag='', if_nor=1,
+             if_filter_ourliers=0, ourliers_thres=60000):
     all_img = all_img.squeeze().astype(np.float32) * norm_factor
     if '.tif' not in im_name:
         all_img_name = output_path + '/' + im_name + tag + '.tif'

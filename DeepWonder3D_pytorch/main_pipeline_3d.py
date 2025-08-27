@@ -1,0 +1,314 @@
+from deepwonder.test_SR_acc_signal import test_sr_net_acc
+from deepwonder.test_RMBG_acc import test_rmbg_net_acc
+from deepwonder.test_SEG_acc import test_seg_net_acc
+from deepwonder.test_MN import calculate_neuron
+from deepwonder.test_DENO_acc import test_DENO_net
+from deepwonder.test_TR import adjust_time_resolution, get_data_fingerprint
+from deepwonder.test_VM import run_view_merging_pipeline
+from deepwonder.utils import save_times_json
+
+import os
+import json
+import datetime
+from natsort import natsorted
+from time import time, sleep
+import numpy as np
+import torch
+import sys
+import gc
+
+
+def clear_large_variables(threshold=1 * 1024 * 1024):  # 默认阈值为1MB
+    # 获取所有全局变量的名称和值
+    global_vars = globals().copy()  # 使用.copy()以避免在迭代时修改字典
+    for var_name, var_value in global_vars.items():
+        # 获取变量的大小
+        size_in_bytes = sys.getsizeof(var_value)
+        # 检查是否大于阈值
+        if size_in_bytes > threshold:
+            # 删除变量
+            del globals()[var_name]
+            print(f"Variable '{var_name}' of size {size_in_bytes} bytes has been deleted.")
+    # 执行垃圾收集
+    gc.collect()
+    print("Garbage collection completed.")
+
+
+def main_pipeline(input_path,
+                  input_folder,
+                  psffit_matrix_file,
+                  SR_up_rate,
+                  GPU_index,
+                  output_dir,
+                  t_resolution=10,
+                  type='deno_sr_rmbg_seg_mn'):
+    NOW_path = input_path
+    NOW_folder = input_folder
+
+    t_DENO = -9999
+    t_TR = -9999
+    t_SR = -9999
+    t_RMBG = -9999
+    t_SEG = -9999
+    t_MN = -9999
+    t_VM = -9999
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    T_output_dir = output_dir
+    save_times_json(times, T_output_dir)
+
+    ############ DENO #########################################
+    ###########################################################
+
+    DENO_datasets_path = NOW_path
+    DENO_datasets_folder = NOW_folder
+    DENO_output_dir = output_dir
+    DENO_output_folder = 'STEP_1_DENO'
+
+    from para_dict import DENO_para, config_DENO_para
+
+    DENO_para['GPU'] = GPU_index
+    DENO_para['DENO_datasets_path'] = DENO_datasets_path
+    DENO_para['DENO_datasets_folder'] = DENO_datasets_folder
+
+    DENO_para['DENO_output_dir'] = DENO_output_dir
+    DENO_para['DENO_output_folder'] = DENO_output_folder
+    DENO_para['denoise_index'] = 0
+
+    if 'deno' in type:
+        DENO_para = config_DENO_para(DENO_para,
+                                     DENO_datasets_path + '//' + DENO_datasets_folder)
+
+        DENO_model_test = test_DENO_net(DENO_para)
+
+        t_DENO = -time()
+        DENO_model_test.run()
+        t_DENO += time()
+
+        NOW_path = output_dir
+        NOW_folder = DENO_output_folder
+        torch.cuda.empty_cache()
+        clear_large_variables()
+    else:
+        print('DENO (denoising) is not in type')
+        t_DENO = -1
+
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    save_times_json(times, T_output_dir)
+
+    ############ TR #########################################
+    ###########################################################
+    if t_resolution != 10 and ('tr' in type):
+        TR_output_dir = output_dir
+        TR_output_folder = 'STEP_2_TR'
+
+        t_TR = -time()
+        adjust_time_resolution(input_path=NOW_path,
+                               input_folder=NOW_folder,
+                               output_path=TR_output_dir,
+                               output_folder=TR_output_folder,
+                               t_resolution=t_resolution)
+        t_TR += time()
+
+        NOW_path = output_dir
+        NOW_folder = TR_output_folder
+        torch.cuda.empty_cache()
+        clear_large_variables()
+    else:
+        print('TR (adjust time resolution) is not in type')
+        t_TR = -1
+
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    save_times_json(times, T_output_dir)
+
+    ############ SR #########################################
+    ###########################################################
+    SR_output_dir = output_dir
+    SR_output_folder = 'STEP_3_SR'
+
+    from para_dict import SR_para, config_SR_para
+
+    SR_para['GPU'] = GPU_index
+    SR_para['up_rate'] = SR_up_rate
+    SR_para['datasets_folder'] = NOW_folder
+    SR_para['datasets_path'] = NOW_path
+    SR_para['output_dir'] = SR_output_dir
+    SR_para['SR_output_folder'] = SR_output_folder  # 'SR'
+
+    print('SR_para -----> ', SR_para)
+    if 'sr' in type:
+        SR_para = config_SR_para(SR_para,
+                                 SR_para['datasets_path'] + '//' + SR_para['datasets_folder'])
+
+        SR_model_test = test_sr_net_acc(SR_para)
+
+        t_SR = -time()
+        SR_model_test.run()
+        t_SR += time()
+
+        NOW_path = output_dir
+        NOW_folder = SR_output_folder
+        torch.cuda.empty_cache()
+        clear_large_variables()
+    else:
+        print('SR (super resolution) is not in type')
+        t_SR = -1
+
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    save_times_json(times, T_output_dir)
+
+    ############ RMBG #########################################
+    ###########################################################
+
+    RMBG_output_dir = output_dir
+    RMBG_output_folder = 'STEP_4_RMBG'
+
+    from para_dict import RMBG_para, config_RMBG_para
+
+    RMBG_para['GPU'] = GPU_index
+    RMBG_para['RMBG_datasets_path'] = NOW_path
+    RMBG_para['RMBG_datasets_folder'] = NOW_folder  # +'//STEP_3_SR'
+    RMBG_para['RMBG_output_dir'] = RMBG_output_dir
+    RMBG_para['RMBG_output_folder'] = RMBG_output_folder
+
+    if 'rmbg' in type:
+        RMBG_para = config_RMBG_para(RMBG_para,
+                                     RMBG_para['RMBG_datasets_path'] + '//' + RMBG_para['RMBG_datasets_folder'])
+
+        RMBG_para['RMBG_batch_size'] = 1
+        RMBG_model_test = test_rmbg_net_acc(RMBG_para)
+
+        t_RMBG = -time()
+        RMBG_model_test.run()
+        t_RMBG += time()
+
+        NOW_path = output_dir
+        NOW_folder = RMBG_output_folder
+        torch.cuda.empty_cache()
+        clear_large_variables()
+    else:
+        print('RMBG (remove background) is not in type')
+        t_RMBG = -1
+
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    save_times_json(times, T_output_dir)
+    ###################### SEG #############
+    ########################################
+
+    SEG_output_dir = output_dir
+    SEG_output_folder = 'STEP_5_SEG'
+
+    from para_dict import SEG_para, config_SEG_para
+
+    SEG_para['GPU'] = GPU_index
+    SEG_para['SEG_datasets_path'] = NOW_path
+    SEG_para['SEG_datasets_folder'] = NOW_folder
+    SEG_para['SEG_output_dir'] = SEG_output_dir
+    SEG_para['SEG_output_folder'] = SEG_output_folder
+
+    if 'seg' in type:
+        SEG_para = config_SEG_para(SEG_para,
+                                   SEG_para['SEG_datasets_path'] + '//' + SEG_para['SEG_datasets_folder'])
+
+        SEG_model_test = test_seg_net_acc(SEG_para)
+
+        t_SEG = -time()
+        SEG_model_test.run()
+        t_SEG += time()
+
+        NOW_path = output_dir
+        NOW_folder = SEG_output_folder
+        torch.cuda.empty_cache()
+        clear_large_variables()
+    else:
+        print('SEG (segmentation) is not in type')
+        t_SEG = -1
+
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    save_times_json(times, T_output_dir)
+
+    ###################### MN ##############
+    ########################################
+    MN_output_dir = output_dir
+    MN_output_folder = 'STEP_6_MN'
+
+    from para_dict import MN_para
+
+    MN_para['RMBG_datasets_folder'] = RMBG_output_folder
+    MN_para['RMBG_datasets_path'] = output_dir
+
+    MN_para['SEG_datasets_path'] = output_dir
+    MN_para['SEG_datasets_folder'] = SEG_output_folder
+
+    # print('SR_output_dir ---> ', SR_output_dir, RMBG_output_dir)
+    MN_para['SR_datasets_path'] = output_dir
+    MN_para['SR_datasets_folder'] = SR_output_folder
+
+    MN_para['MN_output_dir'] = MN_output_dir
+    MN_para['MN_output_folder'] = MN_output_folder
+
+    if 'mn' in type:
+        MN_model = calculate_neuron(MN_para)
+
+        t_MN = -time()
+        MN_model.run()
+        t_MN += time()
+    else:
+        print('MN (merge neurons) is not in type')
+        t_MN = -1
+
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    save_times_json(times, T_output_dir)
+    ###################### VM ##############
+    ########################################
+
+    if 'vm' in type:
+        t_VM = -time()
+        run_view_merging_pipeline(
+            DATA=os.path.join(MN_output_dir, MN_output_folder, 'mat_0'),
+            SAVE=os.path.join(MN_output_dir, 'STEP_7_VM'),
+            psffit_matrix_file=psffit_matrix_file,
+            upsample_rate=SR_up_rate,
+            cutoff_temporal=0.6
+        )
+        t_VM += time()
+    else:
+        print('VM (view merging) is not in type')
+        t_VM = -1
+
+    times = {'DENO': t_DENO, 'TR': t_TR, 'SR': t_SR, 'RMBG': t_RMBG, 'SEG': t_SEG, 'MN': t_MN, 'VM': t_VM}
+    save_times_json(times, T_output_dir)
+
+
+if __name__ == '__main__':
+    torch.multiprocessing.set_start_method('spawn')
+
+    # PARAMS
+    GPU_index = '0'
+
+    # input data
+    now_pixel_size = 4  # unit: μm
+    target_pixel_size = 2  # unit: μm
+    t_resolution = 4  # unit: Hz
+
+    # paths
+    psffit_matrix_file = './pth/psffit_matrix.mat'
+    input_datasets_path = './datasets'
+    input_datasets_folder = 'test'
+    output_path = './results'
+
+    ###############################################
+    # MAIN
+    ###############################################
+    SR_up_rate = int(now_pixel_size / target_pixel_size / 1 * 10) / 10
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+
+    output_dir = os.path.join(output_path, 'DW3D_' + input_datasets_folder + '_up' + str(SR_up_rate) + '_index0')
+    main_pipeline(input_path=input_datasets_path,
+                  input_folder=input_datasets_folder,
+                  psffit_matrix_file=psffit_matrix_file,
+                  SR_up_rate=SR_up_rate,
+                  GPU_index=GPU_index,
+                  output_dir=output_dir,
+                  t_resolution=t_resolution,
+                  type='vm')
