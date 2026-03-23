@@ -6,22 +6,22 @@ Welcome to **DeepWonder3D**, a comprehensive computational framework designed fo
 
 Before executing the pipelines, ensure your local directory is structured as follows to allow for seamless data ingestion and model initialization:
 
-### 1. Pre-trained Weights and Calibration (`/pth`)
+### 1. Pre-trained weights and calibration (`/pth`)
 
 The `/pth` directory must contain the necessary network weights and the optical calibration matrix:
 
 - **Model Weights**: `DENO_pth`, `RMBG_pth`, `SEG_pth`, and `SR_pth`.
 - **Calibration**: `psffit_matrix.mat` (Essential for 3D localization).
 
-### 2. Input Datasets (`/datasets`)
+### 2. Input datasets (`/datasets`)
 
 Raw imaging data should be organized within the `datasets/` directory. For standard testing, place your volumetric files in `datasets/test/`.
 
-### 3. PSF Fitting and 3D Localization
+### 3. PSF fitting and 3D localization
 
 In the final step of **3D localization**, the pre-computed `./pth/psffit_matrix.mat` file will be used.
 
-#### PSF Parameters
+#### PSF parameters
 
 The default PSF parameters are as follows:
 
@@ -84,24 +84,26 @@ DeepWonder3D utilizes a modular sequence of processing steps to ensure robustnes
 - **MN (Merge Neurons)**: Finalizes instance segmentation (i.e., merges neuron instances via spatiotemporal connectivity analysis and extracts their corresponding temporal traces).
 - **VM (View Merging)**: (**3D Only**) Executes multi-view fusion and 3D localization utilizing Point Spread Function (PSF).
 
-| **Code Implementation (Step)** | **Manuscript Reference (Module)** |
-| ------------------------------ | --------------------------------- |
-| **DENO**                       | Denoising Module                  |
-| **TR & SR**                    | Resolution Registration Module    |
-| **RMBG**                       | Background Removal Module         |
-| **SEG & MN**                   | Neuronal Extraction Module        |
-| **VM**                         | Multi-view Fusion Module          |
+| **Code implementation (step)** | **Manuscript reference (module)**          |
+| ------------------------------ | ------------------------------------------ |
+| **DENO**                       | Denoising Module                           |
+| **TR & SR**                    | Resolution Registration Module (RR-module) |
+| **RMBG**                       | Background Removal Module (BR-module)      |
+| **SEG & MN**                   | Neuronal Extraction Module (NE-module)     |
+| **VM**                         | Multi-view Fusion Module (MVF-module)      |
+
+![principle](../figs/principle.png)
 
 
 
 ## IV. Pipeline Execution and Output
 
-### 1. 2D vs. 3D Processing
+### 1. 2D vs. 3D processing
 
 - **`main_pipeline_2d.py`**: Optimized for single-plane or maximum intensity projection (MIP) data where axial depth is not required.
 - **`main_pipeline_3d.py`**: Integrates **View Merging (VM)** to achieve multi-view fusion and 3D localization of neurons.
 
-### 2. Hierarchical Result Structure
+### 2. Hierarchical result structure
 
 Upon completion, the `output_dir` will contain a structured sequence of results across seven distinct steps:
 
@@ -114,6 +116,14 @@ Upon completion, the `output_dir` will contain a structured sequence of results 
 - **`STEP_7_VM`**: (**3D Only**) Final 3D localization and merged temporal traces.
 - **`times`**: Total running time of each processing step.
 
+To provide a more intuitive understanding of the workflow, we use demo data to provide a step-by-step visual tutorial of DeepWonder3D. The following images demonstrate the  outputs from the early stages of the DeepWonder3D pipeline for data preprocessing (i.e., denoising module, RR-module, and BR-module).
+
+![intermediate_RES1](../figs/intermediate_RES1.png)
+
+Below are the expected outputs from the late stages of the DeepWonder3D pipeline (i.e., NE-module and MVF-module).
+
+![intermediate_RES2](../figs/intermediate_RES2.png)
+
 
 
 ## V. Model Training (`main_train.py`)
@@ -122,9 +132,9 @@ While pre-trained models are readily available in the `/pth` directory, `main_tr
 
 Configure the `main_train_pipeline` in the `__main__` block of `main_train.py`:
 
-- **Target Selection**: Set `type='sr'`, `'rmbg'`, or `'seg'` to choose the model for training.
-- **Data Ingestion**: Ensure `input_path` and `input_folder` point to your annotated training pairs.
-- **Sequential Training**: You can combine keywords (e.g., `type='sr_rmbg'`) to train multiple architectures consecutively.
+- **Target selection**: Set `type='sr'`, `'rmbg'`, or `'seg'` to choose the model for training.
+- **Data input**: Ensure `input_path` and `input_folder` point to your annotated training pairs.
+- **Sequential training**: You can combine keywords (e.g., `type='sr_rmbg'`) to train multiple architectures consecutively.
 
 
 
