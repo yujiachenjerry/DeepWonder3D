@@ -2,7 +2,7 @@ Welcome to **DeepWonder3D**, a comprehensive computational framework designed fo
 
 
 
-## I. System Preparation and Requirements
+## I. Preparation
 
 Before executing the pipelines, ensure your local directory is structured as follows to allow for seamless data ingestion and model initialization:
 
