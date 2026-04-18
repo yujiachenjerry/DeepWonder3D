@@ -185,5 +185,7 @@ Configure the `main_train_pipeline` in the `__main__` block of `main_train.py`:
 - **Data input**: Ensure `input_path` and `input_folder` point to your annotated training pairs. Training pair requirements for each processing step are detailed in the [figure below](#SFig1_training_process)
 - **Sequential training**: You can combine keywords (e.g., `type='sr_rmbg'`) to train multiple architectures consecutively.
 
+<a id="SFig1_training_process"></a>
+
 ![SFig1_training_process](../figs/SFig1_training_process.png)
 
