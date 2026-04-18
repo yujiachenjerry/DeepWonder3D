@@ -1,8 +1,16 @@
-# Deepwonder3D：**Rapid** robust high-fidelity 3D neuronal extraction from multi-view projections
+# DeepWonder3D：Rapid robust high-fidelity 3D neuronal extraction from multi-view projections
 
 <p align="center">
   <img src="./figs/logo_white.jpg" style="width: 50%; display: block; margin: auto;" />
 </p>
+
+## **Table of Contents**
+- [About DeepWonder3D](#about-deepwonder3d)
+- [Quick Start](#quick-start)
+- [Our Environment](#our-environment)
+- [Installation](#installation)
+- [Usage](#usage)
+
 
 ## About DeepWonder3D
 
@@ -16,7 +24,7 @@ The pipeline integrates **denoising**, **resolution registration**, **background
 
 We provide two versions of **DeepWonder3D**:
 
-1. **Python source code version** (primarily implemented in [PyTorch](https://pytorch.org/)), available directly in this repository. Installation instructions are provided in the following sections.
+1. **Python source code version** (primarily implemented in [PyTorch](https://pytorch.org/)), available directly in this repository [`DeepWonder3D_pytorch`](https://www.google.com/search?q=[https://github.com/yujiachenjerry/DeepWonder3D/tree/main/DeepWonder3D_pytorch](https://github.com/yujiachenjerry/DeepWonder3D/tree/main/DeepWonder3D_pytorch)). Installation instructions are provided in the following sections. Typically, setting up the required environment takes under 10 minutes on a standard machine, assuming all files are pre-downloaded. However, total installation time may vary depending on your network speed, as certain commands (e.g., `conda install`) require downloading packages.
 2. **GUI version**, which can be downloaded [here](https://cloud.tsinghua.edu.cn/f/8a1dfafe84ec4f5a819f/?dl=1). This version can be used immediately without environment setup.
 
 Once the installation is complete, comprehensive usage documentation can be found [here](./DeepWonder3D_pytorch/README.md). To facilitate a quick hands-on experience with **DeepWonder3D**, we include a `datasets` folder in `DeepWonder3D_pytorch` as a demo for users to try out.
