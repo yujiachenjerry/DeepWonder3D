@@ -114,7 +114,7 @@ def main_train_pipeline(
         ############ RMBG #########################################
         ###########################################################
         SEG_output_dir = output_dir
-        SEG_output_folder = 'STEP_4_RMBG'
+        SEG_output_folder = 'STEP_5_SEG'
 
         from para_dict_train import SEG_para
 
