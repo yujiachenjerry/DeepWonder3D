@@ -1,6 +1,29 @@
 Welcome to **DeepWonder3D**, a comprehensive computational framework designed for the rapid and robust extraction of neuronal information from 3D calcium imaging datasets. This pipeline orchestrates the transition from raw, noisy volumetric data to precise 3D spatial localization and high-fidelity temporal traces, facilitating the analysis of large-scale neuronal dynamics.
 
+## Quick Start
 
+After cloning the whole repository, only three commands are required to run the DeepWonder3D demo.
+
+```bash
+conda activate dw3d
+cd DeepWonder3D_pytorch
+python main_pipeline_3d.py
+```
+
+## Table of Contents
+
+- [I. Preparation](#i-preparation)
+  - [1. Pre-trained weights and calibration (`/pth`)](#1-pre-trained-weights-and-calibration-pth)
+  - [2. Input datasets (`/datasets`)](#2-input-datasets-datasets)
+  - [3. PSF fitting and 3D localization](#3-psf-fitting-and-3d-localization)
+    - [PSF parameters](#psf-parameters)
+    - [Structure of `psffit_matrix`](#structure-of-psffit_matrix)
+- [II. Parameter Configuration](#ii-parameter-configuration)
+- [III. Modular Pipeline Architecture](#iii-modular-pipeline-architecture)
+- [IV. Pipeline Execution and Output](#iv-pipeline-execution-and-output)
+  - [1. 2D vs. 3D processing](#1-2d-vs-3d-processing)
+  - [2. Hierarchical result structure](#2-hierarchical-result-structure)
+- [V. Model Training (`main_train.py`)](#v-model-training-main_trainpy)
 
 ## I. Preparation
 
@@ -10,12 +33,16 @@ Before executing the pipelines, ensure your local directory is structured as fol
 
 The `/pth` directory must contain the necessary network weights and the optical calibration matrix:
 
-- **Model Weights**: `DENO_pth`, `RMBG_pth`, `SEG_pth`, and `SR_pth`.
-- **Calibration**: `psffit_matrix.mat` (Essential for 3D localization).
+- **Model weights**: `DENO_pth`, `RMBG_pth`, `SEG_pth`, and `SR_pth`.
+- **Calibration**: `psffit_matrix.mat` (essential for 3D localization).
+
+Two pre-trained models are provided in `DENO_pth`, `RMBG_pth`, `SEG_pth`, and `SR_pth`, optimized for data with pixel sizes of 1 µm and 2 µm, respectively.
 
 ### 2. Input datasets (`/datasets`)
 
-Raw imaging data should be organized within the `datasets/` directory. For standard testing, place your volumetric files in `datasets/test/`.
+Raw imaging data should be organized within the `datasets/` directory. For standard testing, place your volumetric files in `datasets/test/`. 
+
+In this repository, demo data is provided in `./datasets/test/`, along with the corresponding `./pth/psffit_matrix.mat` (see [3. PSF fitting and 3D localization](#3-psf-fitting-and-3d-localization) for details).
 
 ### 3. PSF fitting and 3D localization
 
@@ -124,19 +151,37 @@ Below are the expected outputs from the late stages of the DeepWonder3D pipeline
 
 ![intermediate_RES2](../figs/intermediate_RES2.png)
 
+The demo dataset provided in this repository is 977 MB. It comprises 13 views (view IDs correspond to [this figure](#views)), with a resolution of 128 × 128 pixels, 1,200 frames, a 4 Hz frame rate, and a 4 µm pixel size. In this demo, we utilized the 2 µm pre-trained DeepWonder3D model for processing. To simulate a standard local workstation, we ran the demo on a 12th Gen Intel Core i7-12700 CPU (2.10 GHz) and a single NVIDIA GeForce RTX 3080 GPU (10 GB). Executing the demo with the following commands requires approximately 800 seconds, resulting in 15.3 GB of saved outputs:
+
+```
+conda activate dw3d
+cd DeepWonder3D_pytorch
+python main_pipeline_3d.py
+```
+
+The processing time for each step is detailed below:
+
+- **`STEP_1_DENO`**: ~80s
+- **`STEP_2_TR`**: ~70s
+- **`STEP_3_SR`**: ~200s
+- **`STEP_4_RMBG`**:  ~200s
+- **`STEP_5_SEG`**: ~90s
+- **`STEP_6_MN`**: ~200s
+- **`STEP_7_VM`**: ~7s
+
+These durations include the input/output (I/O) time for reading the demo data and writing the 15.3 GB of results to disk. The processing time can be substantially reduced by utilizing higher-performance hardware or multi-GPU parallelization.
+
 
 
 ## V. Model Training (`main_train.py`)
 
-While pre-trained models are readily available in the `/pth` directory, `main_train.py` provides the flexibility to train or fine-tune the `DENO`, `SR`, `RMBG`, and `SEG` networks for specialized biological samples or specific microscope configurations.
+While pre-trained models are readily available in the `/pth` directory, `main_train.py` provides the flexibility to train or finetune the `SR`, `RMBG`, and `SEG` networks for specialized biological samples or specific microscope configurations.
 
 Configure the `main_train_pipeline` in the `__main__` block of `main_train.py`:
 
 - **Target selection**: Set `type='sr'`, `'rmbg'`, or `'seg'` to choose the model for training.
-- **Data input**: Ensure `input_path` and `input_folder` point to your annotated training pairs.
+- **Data input**: Ensure `input_path` and `input_folder` point to your annotated training pairs. Training pair requirements for each processing step are detailed in the [figure below](#SFig1_training_process)
 - **Sequential training**: You can combine keywords (e.g., `type='sr_rmbg'`) to train multiple architectures consecutively.
 
-
-
-
+![SFig1_training_process](../figs/SFig1_training_process.png)
 
